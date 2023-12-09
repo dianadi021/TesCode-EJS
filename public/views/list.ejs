@@ -1,0 +1,128 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tes Junior Back End Programmer</title>
+    <!-- JQUERY v3.6.3-->
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.js"
+      integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="http://localhost:9000/assets/scripts/css/index.css" />
+    <script src="http://localhost:9000/assets/scripts/js/controller-views.js"></script>
+  </head>
+  <body>
+    <header>
+      <center><h1>Tes Junior Back End Programmer</h1></center>
+    </header>
+    <nav id="container-main-menu">
+      <ul id="main-menu">
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/">home</a></li>
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/produk">produk</a></li>
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/kategori">kategori</a></li>
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/status">status</a></li>
+      </ul>
+    </nav>
+    <main id="container-content" class="container">
+      <% if(typeof data == 'string'){%>
+      <div class="row justify-content-md-center"><h2><%=data%></h2></div>
+      <%}else if(section == 'status'){ data.forEach((list) =>{const {_id,nama_status} = list%>
+        <div class="card" style="width: 18rem">
+          <div class="card-body">
+            <h2 class="card-title"><%= nama_status %></h2>
+            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-status`,`<%=_id%>`)">edit</div>
+            <form id="form-delete-status">
+              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-status','<%=_id%>')">
+                hapus
+              </button>
+            </form>
+          </div>
+      <%})}else{data.forEach((list) =>{const {_id,nama_kategori} = list%>
+      <div class="card" style="width: 18rem">
+        <div class="card-body">
+          <h2 class="card-title"><%= nama_kategori %></h2>
+          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-kategori`,`<%=_id%>`)">edit</div>
+          <form id="form-delete-kategori">
+            <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-kategori','<%=_id%>')">
+              hapus
+            </button>
+          </form>
+        </div>
+      <%})}%>
+    </main>
+    <aside id="container-fitur">
+      <div class="widget">
+        <%if(section == 'status'){%>
+        <div onclick="showOverlayFormInputProduk('form-create-document-status')" class="btn btn-primary">tambah</div>
+        <%}else{%>
+        <div onclick="showOverlayFormInputProduk('form-create-document-kategori')" class="btn btn-primary">tambah</div>
+        <%}%>
+      </div>
+      <div class="widget">
+        <input type="text" class="form-control" id="search" placeholder="search" />
+        <div class="btn btn-primary"><span class="fas fa-magnifying-glass"></span></div>
+      </div>
+    </aside>
+    <footer id="copyright-footer">
+      2023 &copy;
+      <a title="Dian Adi Nugroho(website)" href="https://dianadi021.github.io/" target="_blank" rel="noopener noreferrer"
+        >dian adi nugroho</a
+      >
+    </footer>
+    <div class="overlay" id="overlay">
+      <div class="overlay-content">
+        <form id="form-create-document-status" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
+            <label for="nama_status" class="form-label">Nama Status</label>
+            <input type="text" class="form-control" id="nama_status" name="nama_status" placeholder="Bisa dijual" required />
+            <div class="invalid-feedback">Silahkan untuk mengisi nama status.</div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Submit form</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-create-document-status')">Cancel</button>
+          </div>
+        </form>
+        <form id="form-edit-document-status" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
+            <label for="nama_status" class="form-label">Nama Status</label>
+            <input type="text" class="form-control" id="nama_status" name="nama_status" placeholder="Bisa dijual" required />
+            <div class="invalid-feedback">Silahkan untuk mengisi nama status.</div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Simpan</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-edit-document-status')">Cancel</button>
+          </div>
+        </form>
+        <form id="form-create-document-kategori" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
+            <label for="nama_kategori" class="form-label">Nama Kategori</label>
+            <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="Aksesoris" required />
+            <div class="invalid-feedback">Silahkan untuk mengisi nama kategori.</div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Submit form</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-create-document-kategori')">
+              Cancel
+            </button>
+          </div>
+        </form>
+        <form id="form-edit-document-kategori" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
+            <label for="nama_kategori" class="form-label">Nama Kategori</label>
+            <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="Aksesoris" required />
+            <div class="invalid-feedback">Silahkan untuk mengisi nama kategori.</div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Simpan</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-edit-document-kategori')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="http://localhost:9000/assets/vendor/bootstrap-5.3.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

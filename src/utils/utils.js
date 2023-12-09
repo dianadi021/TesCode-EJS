@@ -42,6 +42,10 @@ const CheckingObjectValue = (ParentObject, AddKeyObject) => {
   return ParentObject;
 };
 
+const GetIDNMoneyCurrency = (Money) => {
+  return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Money);
+};
+
 module.exports = {
   CheckingIsNilValue,
   CheckingKeyReq,

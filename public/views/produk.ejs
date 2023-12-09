@@ -16,12 +16,6 @@
     <script src="http://localhost:9000/assets/scripts/js/controller-views.js"></script>
   </head>
   <body>
-    <!-- <%if (isCreateDocument) {%>
-    <div class="alert alert-success alert-dismissible" role="alert">
-      <div><%=data%></div>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <%}%> -->
     <header>
       <center><h1>Tes Junior Back End Programmer</h1></center>
     </header>
@@ -29,44 +23,43 @@
       <ul id="main-menu">
         <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/">home</a></li>
         <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/produk">produk</a></li>
-        <!-- <li><a onclick="">card</a></li>
-        <li>
-          <a onclick=""><span class="fas fa-code"></span></a>
-        </li> -->
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/kategori">kategori</a></li>
+        <li style="border-left: dotted whitesmoke 1px"><a href="http://localhost:9000/status">status</a></li>
       </ul>
     </nav>
     <main id="container-content" class="container">
       <% if(typeof data == 'string'){%>
       <div class="row justify-content-md-center"><h2><%=data%></h2></div>
-      <%}else{%> <% const GetIDNMoneyCurrency = (Money) => { return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR'
-      }).format(Money); }; %> <% if(!isDetails){%> <%for (const list of data) { %> <% const {_id,nama_produk,harga,kategori_id,status_id} =
-      list %>
+      <%}else{const GetIDNMoneyCurrency = (Money) => { return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR'
+      }).format(Money); }; if(!isDetails){data.forEach((list) =>{ const {_id,nama_produk,harga,kategori_id,status_id} = list %>
       <article>
         <div class="card" style="width: 18rem">
           <div class="card-body">
             <h2 class="card-title"><%= nama_produk %></h2>
-            <h3 class="card-subtitle mb-2 text-body-secondary"><%= GetIDNMoneyCurrency(harga) %></h3>
+            <h3 class="card-subtitle mb-2 text-body-secondary"><%=GetIDNMoneyCurrency(harga)%></h3>
             <h4>Status: <%=status_id%></h4>
             <h5>Kategori: <%=kategori_id%></h5>
             <a href="http://localhost:9000/produk/<%=_id%>">details</a>
-            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document`,`<%=_id%>`)">edit</div>
+            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-produk`,`<%=_id%>`)">edit</div>
             <form id="form-delete-produk">
-              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-produk','<%=_id%>')">hapus</button>
+              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-produk','<%=_id%>')">
+                hapus
+              </button>
             </form>
           </div>
         </div>
       </article>
-      <% } %> <% }else{ %> <%for (const list of data) { %> <% const {_id,nama_produk,harga,kategori_id,status_id} = list %>
+      <% })}else{ data.forEach((list) =>{ const {_id,nama_produk,harga,kategori_id,status_id} = list %>
       <h1><%=_id%></h1>
       <h2><%=nama_produk%></h2>
       <h2><%=GetIDNMoneyCurrency(harga)%></h2>
       <h2><%=kategori_id%></h2>
       <h2><%=status_id%></h2>
-      <% } %> <% } %> <%}%>
+      <% })} }%>
     </main>
     <aside id="container-fitur">
       <div class="widget">
-        <div onclick="showOverlayFormInputProduk('form-create-document')" class="btn btn-primary">tambah</div>
+        <div onclick="showOverlayFormInputProduk('form-create-document-produk')" class="btn btn-primary">tambah</div>
       </div>
       <div class="widget">
         <input type="text" class="form-control" id="search" placeholder="search" />
@@ -77,7 +70,6 @@
           <label for="status" class="form-label">Status</label>
           <select class="form-select" id="status">
             <option selected disabled value="">Choose...</option>
-            <option>...</option>
           </select>
         </div>
       </div>
@@ -86,16 +78,20 @@
           <label for="ketegori" class="form-label">Kategori</label>
           <select class="form-select" id="ketegori">
             <option selected disabled value="">Choose...</option>
-            <option>...</option>
           </select>
         </div>
       </div>
     </aside>
-    <footer id="copyright-footer">2023 &copy; <a title="Dian Adi Nugroho(website)" href="https://dianadi021.github.io/" target="_blank" rel="noopener noreferrer">dian adi nugroho</a></footer>
+    <footer id="copyright-footer">
+      2023 &copy;
+      <a title="Dian Adi Nugroho(website)" href="https://dianadi021.github.io/" target="_blank" rel="noopener noreferrer"
+        >dian adi nugroho</a
+      >
+    </footer>
     <div class="overlay" id="overlay">
       <div class="overlay-content">
-        <form id="form-create-document" method="post" class="row g-3 needs-validation" novalidate>
-          <div class="col-md-4">
+        <form id="form-create-document-produk" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
             <label for="nama_produk" class="form-label">Nama produk</label>
             <input type="text" class="form-control" id="nama_produk" name="nama_produk" placeholder="Tas keren" required />
             <div class="invalid-feedback">Silahkan untuk mengisi nama produk.</div>
@@ -103,16 +99,8 @@
           </div>
           <div class="col-md-3">
             <label for="harga" class="form-label">Harga</label>
-            <input type="text" class="form-control" id="harga" name="harga" required />
+            <input type="text" class="form-control" id="harga" name="harga" oninput="CheckingFormIsNotString()" required />
             <div class="invalid-feedback">Silahkan untuk mengisi harga produk.</div>
-          </div>
-          <div class="col-md-3">
-            <label for="ketegori" class="form-label">Kategori</label>
-            <select class="form-select" id="ketegori">
-              <option selected disabled value="">Choose...</option>
-              <option>...</option>
-            </select>
-            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
           <div class="col-md-3">
             <label for="status" class="form-label">Status</label>
@@ -121,19 +109,21 @@
               <option>...</option>
             </select>
             <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
+          </div>
+          <div class="col-md-3">
+            <label for="list-kategori-checkbox-create">Kategori</label>
+            <div id="list-kategori-checkbox-create" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+              <input type="checkbox" class="btn-check" id="create" autocomplete="off" />
+              <label class="btn btn-outline-primary" for="create">Checkbox 1</label>
+            </div>
           </div>
           <div class="col-12">
             <button class="btn btn-primary" type="submit">Submit form</button>
-            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-create-document')">Cancel</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-create-document-produk')">Cancel</button>
           </div>
         </form>
-        <form
-          id="form-edit-document"
-          method="post"
-          class="row g-3 needs-validation"
-          novalidate
-        >
-          <div class="col-md-4">
+        <form id="form-edit-document-produk" method="post" class="row g-3 needs-validation" novalidate>
+          <div class="col-8">
             <label for="nama_produk" class="form-label">Nama produk</label>
             <input type="text" class="form-control" id="nama_produk" name="nama_produk" placeholder="Tas keren" required />
             <div class="invalid-feedback">Silahkan untuk mengisi nama produk.</div>
@@ -145,14 +135,6 @@
             <div class="invalid-feedback">Silahkan untuk mengisi harga produk.</div>
           </div>
           <div class="col-md-3">
-            <label for="ketegori" class="form-label">Kategori</label>
-            <select class="form-select" id="ketegori">
-              <option selected disabled value="">Choose...</option>
-              <option>...</option>
-            </select>
-            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
-          </div>
-          <div class="col-md-3">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status">
               <option selected disabled value="">Choose...</option>
@@ -160,9 +142,16 @@
             </select>
             <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
+          <div class="col-md-3">
+            <label for="list-kategori-checkbox-update">Kategori</label>
+            <div id="list-kategori-checkbox-update" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+              <input type="checkbox" class="btn-check" id="update" autocomplete="off" />
+              <label class="btn btn-outline-primary" for="update">Checkbox 1</label>
+            </div>
+          </div>
           <div class="col-12">
             <button class="btn btn-primary" type="submit">Simpan</button>
-            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-edit-document')">Cancel</button>
+            <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-edit-document-produk')">Cancel</button>
           </div>
         </form>
       </div>

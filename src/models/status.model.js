@@ -15,7 +15,7 @@ const StatusSchema = mongoose.Schema(
     },
   }
 );
-const StatusModel = mongoose.model('Status', StatusSchema);
+const StatusModel = mongoose.model('StatusProduk', StatusSchema);
 
 const FormatInputStatus = { nama_status: 'String' };
 

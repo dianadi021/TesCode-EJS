@@ -15,8 +15,8 @@ const KategoriSchema = mongoose.Schema(
     },
   }
 );
-const KategoriModel = mongoose.model('Kategori', KategoriSchema);
+const KategoriModel = mongoose.model('KategoriProduk', KategoriSchema);
 
 const FormatInputKategori = { nama_kategori: 'String' };
 
-module.exports = { KategoriModel, FormatInputKategori };
+module.exports = { mongoose, KategoriModel, FormatInputKategori };

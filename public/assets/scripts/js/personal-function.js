@@ -114,7 +114,22 @@ function showOverlayFormInputProduk(FormID, _IDDocument) {
   if (FormID) {
     document.getElementById(FormID).style.display = 'flex';
     if (_IDDocument) {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/edit/${_IDDocument}`);
+      if (FormID == 'form-edit-document-status') {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/edit/${_IDDocument}`);
+      } 
+      if (FormID == 'form-edit-document-kategori') {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/edit/${_IDDocument}`);
+      } if() {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/edit/${_IDDocument}`);
+      }
+    }else{
+      if (FormID == 'form-create-document-status') {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/`);
+      } else if (FormID == 'form-create-document-kategori') {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/`);
+      } else {
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/`);
+      }
     }
   }
 }
@@ -128,11 +143,21 @@ function deleteDocumentAlert(FormID, _IDDocument) {
   const confirmDelete = prompt("Apakah anda mau menghapus document? ketik 'Lanjutkan'");
   if (confirmDelete == 'lanjutkan') {
     document.getElementById(FormID).setAttribute('method', `post`);
-    document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/delete/${_IDDocument}`);
-    document.getElementById("btn-delete-document").addEventListener("click", FormID);
+    if (FormID == 'form-delete-status') {
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/delete/${_IDDocument}`);
+    } else if (FormID == 'form-delete-kategori') {
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/delete/${_IDDocument}`);
+    } else {
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/delete/${_IDDocument}`);
+    }
+    document.getElementById('btn-delete-document').addEventListener('click', FormID);
   } else if (typeof confirmDelete == 'string' && confirmDelete != 'lanjutkan') {
-    alert('Inputan tidak sesuai! Silahkan coba lagi.')
-  }else{
-    alert('Penghapusan document telah dibatalkan.')
+    alert('Inputan tidak sesuai! Silahkan coba lagi.');
+  } else {
+    alert('Penghapusan document telah dibatalkan.');
   }
 }
+
+const GetIDNMoneyCurrency = (Money) => {
+  return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Money);
+};

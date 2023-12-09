@@ -9,6 +9,8 @@ $(document).ready(() => {
     showOverlayFormInputProduk();
     hideOverlayFormInputProduk();
     deleteDocumentAlert();
+    GetIDNMoneyCurrency();
+    CheckingFormIsNotString();
   });
 
   $.getScript(serverURL + '/views/home.js', async () => {

@@ -31,16 +31,25 @@
       <% if(typeof data == 'string'){%>
       <div class="row justify-content-md-center"><h2><%=data%></h2></div>
       <%}else{const GetIDNMoneyCurrency = (Money) => { return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR'
-      }).format(Money); }; if(!isDetails){data.forEach((list) =>{ const {_id,nama_produk,harga,kategori_id,status_id} = list %>
+      }).format(Money); }; if(!isDetails){data.forEach((list) =>{ const {_id,nama_produk,harga,list_kategori,status_actived} = list %>
       <article>
         <div class="card" style="width: 18rem">
           <div class="card-body">
             <h2 class="card-title"><%= nama_produk %></h2>
             <h3 class="card-subtitle mb-2 text-body-secondary"><%=GetIDNMoneyCurrency(harga)%></h3>
-            <h4>Status: <%=status_id%></h4>
-            <h5>Kategori: <%=kategori_id%></h5>
+            <h4>
+              <%const tempstatus_actived = status_actived.length<1?{'nama_status':'-'}:status_actived[0]; const {nama_status} =
+              tempstatus_actived%>Status: <%=nama_status%>
+            </h4>
+            <%if(list_kategori.length>0){list_kategori.forEach((list) =>{ const {_id,nama_kategori} = list})%>
+            <h5>Kategori:<%=nama_kategori%></h5>
+            <%}else{%>
+            <h5>Kategori: -</h5>
+            <%}%>
             <a href="http://localhost:9000/produk/<%=_id%>">details</a>
-            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-produk`,`<%=_id%>`)">edit</div>
+            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-produk`,`<%=JSON.stringify(list)%>`)">
+              edit
+            </div>
             <form id="form-delete-produk">
               <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-produk','<%=_id%>')">
                 hapus
@@ -49,13 +58,17 @@
           </div>
         </div>
       </article>
-      <% })}else{ data.forEach((list) =>{ const {_id,nama_produk,harga,kategori_id,status_id} = list %>
+      <% })}else{data.forEach((list) =>{ const {_id,nama_produk,harga,kategori_id,status_id} = list %>
+      <!-- <h1><%=JSON.stringify(data)%></h1> -->
       <h1><%=_id%></h1>
       <h2><%=nama_produk%></h2>
-      <h2><%=GetIDNMoneyCurrency(harga)%></h2>
-      <h2><%=kategori_id%></h2>
-      <h2><%=status_id%></h2>
-      <% })} }%>
+      <h3><%=GetIDNMoneyCurrency(harga)%></h3>
+      <h4><%const tempStatus_id = status_id[0]==undefined?'-':status_id[0]%><%=tempStatus_id%></h4>
+      <%if(kategori_id.length>0){kategori_id.forEach((list) =>{ const {_id,nama_kategori} = list})%>
+      <h5><%=nama_kategori%></h5>
+      <%}else{%>
+      <h5>-</h5>
+      <%} })} }%>
     </main>
     <aside id="container-fitur">
       <div class="widget">
@@ -70,6 +83,9 @@
           <label for="status" class="form-label">Status</label>
           <select class="form-select" id="status">
             <option selected disabled value="">Choose...</option>
+            <%if(status_data.length > 0){ status_data.forEach((list)=>{const {_id,nama_status}=list%>
+            <option value="<%=_id%>"><%=nama_status%></option>
+            <%})}%>
           </select>
         </div>
       </div>
@@ -99,14 +115,16 @@
           </div>
           <div class="col-md-3">
             <label for="harga" class="form-label">Harga</label>
-            <input type="text" class="form-control" id="harga" name="harga" oninput="CheckingFormIsNotString()" required />
+            <input type="text" class="form-control" id="harga" name="harga" required />
             <div class="invalid-feedback">Silahkan untuk mengisi harga produk.</div>
           </div>
           <div class="col-md-3">
             <label for="status" class="form-label">Status</label>
-            <select class="form-select" id="status">
+            <select id="status_id" name="status_id" class="form-select">
               <option selected disabled value="">Choose...</option>
-              <option>...</option>
+              <%if(status_data.length > 0){ status_data.forEach((list)=>{const {_id,nama_status}=list%>
+              <option value="<%=_id%>"><%=nama_status%></option>
+              <%})}%>
             </select>
             <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
@@ -138,9 +156,7 @@
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status">
               <option selected disabled value="">Choose...</option>
-              <option>...</option>
             </select>
-            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
           <div class="col-md-3">
             <label for="list-kategori-checkbox-update">Kategori</label>

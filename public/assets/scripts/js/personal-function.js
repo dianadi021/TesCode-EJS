@@ -109,20 +109,28 @@ function FormValidationForProduk() {
   })();
 }
 
-function showOverlayFormInputProduk(FormID, _IDDocument) {
+function showOverlayFormInputProduk(FormID, list) {
   document.getElementById('overlay').style.display = 'flex';
   if (FormID) {
     document.getElementById(FormID).style.display = 'flex';
-    if (_IDDocument) {
+    if (list) {
+      const { _id, nama_kategori, nama_status, nama_produk, harga, kategori_id, status_id } = JSON.parse(list);
       if (FormID == 'form-edit-document-status') {
-        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/edit/${_IDDocument}`);
-      } 
-      if (FormID == 'form-edit-document-kategori') {
-        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/edit/${_IDDocument}`);
-      } if() {
-        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/edit/${_IDDocument}`);
+        $('#form-edit-document-status div #nama_status').val(nama_status);
+        $('#form-edit-document-status div #nama_status').attr('placeholder', nama_status);
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/edit/${_id}`);
+      } else if (FormID == 'form-edit-document-kategori') {
+        $('#form-edit-document-kategori div #nama_kategori').val(nama_kategori);
+        $('#form-edit-document-kategori div #nama_kategori').attr('placeholder', nama_kategori);
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/edit/${_id}`);
+      } else {
+        $('#form-edit-document-produk div #nama_produk').val(nama_produk);
+        $('#form-edit-document-produk div #nama_produk').attr('placeholder', nama_produk);
+        $('#form-edit-document-produk div #harga').val(harga);
+        $('#form-edit-document-produk div #harga').attr('placeholder', harga);
+        document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/edit/${_id}`);
       }
-    }else{
+    } else {
       if (FormID == 'form-create-document-status') {
         document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/`);
       } else if (FormID == 'form-create-document-kategori') {
@@ -139,16 +147,17 @@ function hideOverlayFormInputProduk(FormID) {
   document.getElementById(FormID).style.display = 'none';
 }
 
-function deleteDocumentAlert(FormID, _IDDocument) {
+function deleteDocumentAlert(FormID, list) {
   const confirmDelete = prompt("Apakah anda mau menghapus document? ketik 'Lanjutkan'");
   if (confirmDelete == 'lanjutkan') {
+    const { _id } = JSON.parse(list);
     document.getElementById(FormID).setAttribute('method', `post`);
     if (FormID == 'form-delete-status') {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/delete/${_IDDocument}`);
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/delete/${_id}`);
     } else if (FormID == 'form-delete-kategori') {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/delete/${_IDDocument}`);
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/delete/${_id}`);
     } else {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/delete/${_IDDocument}`);
+      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/delete/${_id}`);
     }
     document.getElementById('btn-delete-document').addEventListener('click', FormID);
   } else if (typeof confirmDelete == 'string' && confirmDelete != 'lanjutkan') {
@@ -161,3 +170,5 @@ function deleteDocumentAlert(FormID, _IDDocument) {
 const GetIDNMoneyCurrency = (Money) => {
   return Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Money);
 };
+
+const EditChangesFormValue = (nama, harga, kategori, status) => {};

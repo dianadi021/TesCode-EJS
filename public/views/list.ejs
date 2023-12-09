@@ -34,9 +34,9 @@
         <div class="card" style="width: 18rem">
           <div class="card-body">
             <h2 class="card-title"><%= nama_status %></h2>
-            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-status`,`<%=_id%>`)">edit</div>
+            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-status`,`<%=JSON.stringify(list)%>`)">edit</div>
             <form id="form-delete-status">
-              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-status','<%=_id%>')">
+              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-status','<%=JSON.stringify(list)%>')">
                 hapus
               </button>
             </form>
@@ -45,9 +45,9 @@
       <div class="card" style="width: 18rem">
         <div class="card-body">
           <h2 class="card-title"><%= nama_kategori %></h2>
-          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-kategori`,`<%=_id%>`)">edit</div>
+          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-kategori`,`<%=JSON.stringify(list)%>`)">edit</div>
           <form id="form-delete-kategori">
-            <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-kategori','<%=_id%>')">
+            <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-kategori','<%=JSON.stringify(list)%>')">
               hapus
             </button>
           </form>

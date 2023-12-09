@@ -7,7 +7,8 @@ const CreateKategoriData = async (req, res) => {
   try {
     const { nama_kategori } = req.body.data ? JSON.parse(req.body.data) : req.body;
     if (!nama_kategori) {
-      return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
+      res.render('list', { section: 'status', data: `Format tidak sesuai! format: ${FormatInputKategori}` });
+      // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
     }
     const newKategori = KategoriModel({ nama_kategori: nama_kategori.toLowerCase() });
     return await newKategori
@@ -15,7 +16,8 @@ const CreateKategoriData = async (req, res) => {
       .then((result) => res.render('list', { section: 'kategori', data: 'Berhasil membuat data kategori.' }))
       .catch((err) => res.render('list', { section: 'kategori', data: `Gagal membuat data kategori. Catch: ${err}` }));
   } catch (err) {
-    return res.status(500).json({ status: 'failed', data: `Gagal membuat data kategori. Function Catch: ${err}` });
+    res.render('list', { section: 'kategori', data: `Gagal membuat data kategori. Catch: ${err}` });
+    // return res.status(500).json({ status: 'failed', data: `Gagal membuat data kategori. Function Catch: ${err}` });
   }
 };
 
@@ -29,10 +31,7 @@ const GetKategoriData = async (req, res) => {
     }
     if (isHasSyntax && nama_kategori) {
       let toFilter = nama_kategori ? { nama_kategori: nama_kategori.toLowerCase() } : false;
-      const isDocumentHasInDatabase = await KategoriModel.aggregate([
-        { $project: { _id: 1, nama_kategori: 1, harga: 1 } },
-        { $match: toFilter },
-      ]);
+      const isDocumentHasInDatabase = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }, { $match: toFilter }]);
       if (isDocumentHasInDatabase.length < 1) {
         res.render('list', { section: 'kategori', data: 'tidak ada data yang tersimpan' });
       }
@@ -41,9 +40,9 @@ const GetKategoriData = async (req, res) => {
 
     const isDocumentHasInDatabase =
       !page && !document
-        ? await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1, harga: 1 } }])
+        ? await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }])
         : await KategoriModel.aggregate([
-            { $project: { _id: 1, nama_kategori: 1, harga: 1 } },
+            { $project: { _id: 1, nama_kategori: 1 } },
             { $skip: (parseInt(page) - 1) * parseInt(document) },
             { $limit: parseInt(document) },
           ]);
@@ -64,10 +63,12 @@ const GetKategoriDetails = async (req, res) => {
     if (isDocumentHasInDatabase) {
       res.render('list', { data: isDocumentHasInDatabase });
     } else {
-      return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
+      res.render('list', { section: 'kategori', data: `Tidak ada data kategori.` });
+      // return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
     }
   } catch (err) {
-    return res.status(500).json({ status: 'failed', data: `Gagal mengambil data kategori. Function Catch: ${err}` });
+    res.render('list', { section: 'kategori', data: `Gagal mengambil data kategori. Function Catch: ${err}` });
+    // return res.status(500).json({ status: 'failed', data: `Gagal mengambil data kategori. Function Catch: ${err}` });
   }
 };
 
@@ -76,21 +77,26 @@ const UpdateKategoriData = async (req, res) => {
     const { id } = req.params;
     const isDocumentHasInDatabase = await KategoriModel.findById(id);
     if (!isDocumentHasInDatabase) {
-      return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
+      res.render('list', { section: 'kategori', data: `Tidak ada data kategori.` });
+      // return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
     }
     const { nama_kategori } = CheckingKeyReq(req.body, req.query, req.body.data);
     if (!nama_kategori) {
-      return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
+      res.render('list', { section: 'kategori', data: `Format tidak sesuai! format: ${FormatInputKategori}` });
+      // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
     }
 
     let updateKategori = { nama_kategori: nama_kategori.toLowerCase() };
     return await KategoriModel.findByIdAndUpdate(id, updateKategori)
-      .then((result) => res.status(200).json({ section: 'kategori', status: 'success', data: `Berhasil memperbaharui data kategori.` }))
-      .catch((err) =>
-        res.status(500).json({ section: 'kategori', status: 'failed', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` })
+      // .then((result) => res.status(200).json({ section: 'kategori', status: 'success', data: `Berhasil memperbaharui data kategori.` }))
+      .then((result) => res.render('list', { section: 'kategori', data: `Berhasil memperbaharui data kategori.` }))
+      .catch(
+        (err) => res.render('list', { section: 'kategori', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` })
+        // res.status(500).json({ section: 'kategori', status: 'failed', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` })
       );
   } catch (err) {
-    return res.status(500).json({ status: 'failed', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` });
+    res.render('list', { section: 'kategori', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` });
+    // return res.status(500).json({ status: 'failed', data: `Gagal memperbaharui data kategori. Function Catch: ${err}` });
   }
 };
 
@@ -99,17 +105,15 @@ const DeleteKategoriData = async (req, res) => {
     const { id } = req.params;
     const isDocumentHasInDatabase = await KategoriModel.findById(id);
     if (!isDocumentHasInDatabase) {
-      return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
+      res.render('list', { section: 'kategori', data: `Tidak ada data kategori.` });
+      // return res.status(404).json({ status: 'success', data: `Tidak ada data kategori.` });
     }
     return await KategoriModel.findByIdAndRemove(id)
-      .then((result) =>
-        res.render('list', {
-          data: 'Berhasil menghapus data kategori.',
-        })
-      )
+      .then((result) => res.render('list', { section: 'kategori', data: 'Berhasil menghapus data kategori.' }))
       .catch((err) => res.render('list', { section: 'kategori', data: `Gagal menghapus data kategori. Catch: ${err}` }));
   } catch (err) {
-    return res.status(500).json({ status: 'failed', data: `Gagal menghapus data kategori. Function Catch: ${err}` });
+    res.render('list', { section: 'kategori', data: `Gagal menghapus data kategori. Function Catch: ${err}` });
+    // return res.status(500).json({ status: 'failed', data: `Gagal menghapus data kategori. Function Catch: ${err}` });
   }
 };
 

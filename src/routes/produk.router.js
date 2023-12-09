@@ -21,7 +21,7 @@ router.get('/produk', async (req, res) => {
   try {
     await GetProdukData(req, res);
   } catch (err) {
-    res.render('produk', { messages: JSON.stringify({ status: 'failed', message: `Function catch error: ${err}` }) });
+    res.render('produk', { status: 'failed', data: `Function catch error: ${err}`, status_data: [] });
     // res.status(500).json({ status: 'failed', message: `Endpoint error: ${err}` });
   }
 });

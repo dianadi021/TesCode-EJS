@@ -2,10 +2,12 @@
 
 const { mongoose, ProdukModel, FormatInputProduk } = require('../models/produk.model');
 const { StatusModel } = require('../models/status.model');
+const { KategoriModel } = require('../models/kategori.model');
 const { CheckingKeyReq, CheckingKeyReqSyntax, CheckingIsNilValue, CheckingObjectValue } = require('../utils/utils');
 
 const CreateProdukData = async (req, res) => {
   try {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
     const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     const { nama_produk, harga, kategori_id, status_id } = req.body.data ? JSON.parse(req.body.data) : req.body;
     if (!nama_produk || !harga) {
@@ -14,14 +16,15 @@ const CreateProdukData = async (req, res) => {
         isCreateDocument: true,
         data: `Format tidak sesuai! format:${FormatInputProduk}`,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputProduk });
     }
     const newProduk = ProdukModel({
       nama_produk: nama_produk.toLowerCase(),
       harga,
-      kategori_id: kategori_id ? kategori_id : null,
-      status_id: status_id ? status_id : null,
+      kategori_id: kategori_id ? kategori_id : undefined,
+      status_id: status_id ? status_id : undefined,
     });
     return await newProduk
       .save()
@@ -32,6 +35,7 @@ const CreateProdukData = async (req, res) => {
           isCreateDocument: true,
           data: 'Berhasil membuat data produk.',
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         })
       )
       // .catch((err) => res.status(500).json({ status: 'failed', data: `Gagal membuat data produk. Catch: ${err}` }));
@@ -41,14 +45,18 @@ const CreateProdukData = async (req, res) => {
           isCreateDocument: true,
           data: `Gagal membuat data produk. Catch: ${err}`,
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         })
       );
   } catch (err) {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
+    const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     res.render('produk', {
       isDetails: false,
       isCreateDocument: true,
       data: `Gagal membuat data produk. Function Catch: ${err}`,
       status_data: tempStatusDataDocument,
+      kategori_data: tempKategoriDataDocument,
     });
     // return res.status(500).json({ status: 'failed', data: `Gagal membuat data produk. Function Catch: ${err}` });
   }
@@ -57,6 +65,7 @@ const CreateProdukData = async (req, res) => {
 const GetProdukData = async (req, res) => {
   const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
   try {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
     const syntaxExec = ['nama_produk', 'status_id', 'nama_status', 'kategori_id', 'nama_kategori', 'page', 'document'];
     const { nama_produk, status_id, nama_status, kategori_id, nama_kategori, document, page } = CheckingKeyReq(
       req.body,
@@ -88,13 +97,14 @@ const GetProdukData = async (req, res) => {
         isDeleteDocument: false,
         data: 'Query tidak benar atau tidak terdaftar!',
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
     }
     if (isHasSyntax && (nama_produk || status_id || nama_status || kategori_id || nama_kategori)) {
       let toFilter = nama_produk ? { nama_produk: nama_produk.toLowerCase() } : false;
-      toFilter = !toFilter ? { status_actived: { $elemMatch: { nama_status: nama_status } } } : toFilter;
+      toFilter = !toFilter && nama_status ? { status_actived: { $elemMatch: { nama_status: nama_status } } } : false;
+      toFilter = !toFilter && nama_kategori ? { list_kategori: { $elemMatch: { nama_kategori: nama_kategori } } } : toFilter;
       // toFilter = !toFilter ? { status_id: mongoose.Types.ObjectId(status_id) } : toFilter;
-      console.log(toFilter);
       const isDocumentHasInDatabase = await ProdukModel.aggregate([
         {
           $lookup: {
@@ -122,6 +132,7 @@ const GetProdukData = async (req, res) => {
           isDeleteDocument: false,
           data: 'tidak ada data yang tersimpan',
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         });
       }
       res.render('produk', {
@@ -130,6 +141,7 @@ const GetProdukData = async (req, res) => {
         isDeleteDocument: false,
         data: isDocumentHasInDatabase,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(200).json({ status: 'success', data: `Berhasil mengambil data produk.`, data: isDocumentHasInDatabase });
     }
@@ -185,6 +197,7 @@ const GetProdukData = async (req, res) => {
         isDeleteDocument: false,
         data: isDocumentHasInDatabase,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(200).json({ status: 'success', data: `Berhasil mengambil data produk.`, data: isDocumentHasInDatabase });
     } else {
@@ -195,15 +208,19 @@ const GetProdukData = async (req, res) => {
         isDeleteDocument: false,
         data: 'tidak ada data yang tersimpan',
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
     }
   } catch (err) {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
+    const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     res.render('produk', {
       isDetails: false,
       isCreateDocument: false,
       isDeleteDocument: false,
       data: `Gagal mengambil data produk. Function Catch: ${err}`,
       status_data: tempStatusDataDocument,
+      kategori_data: tempKategoriDataDocument,
     });
     // return res.status(500).json({ status: 'failed', data: `Gagal mengambil data produk. Function Catch: ${err}` });
   }
@@ -211,6 +228,7 @@ const GetProdukData = async (req, res) => {
 
 const GetProdukDetails = async (req, res) => {
   try {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
     const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     let { id } = req.params;
     let isDocumentHasInDatabase = await ProdukModel.aggregate([
@@ -239,6 +257,7 @@ const GetProdukDetails = async (req, res) => {
         isDeleteDocument: false,
         data: isDocumentHasInDatabase,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(200).json({ status: 'success', data: `Berhasil mengambil data produk.`, data: isDocumentHasInDatabase });
     } else {
@@ -248,16 +267,20 @@ const GetProdukDetails = async (req, res) => {
         isDeleteDocument: false,
         data: `Tidak ada data produk.`,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(404).json({ status: 'success', data: `Tidak ada data produk.` });
     }
   } catch (err) {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
+    const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     res.render('produk', {
       isDetails: true,
       isCreateDocument: false,
       isDeleteDocument: false,
       data: `Gagal mengambil data produk. Function Catch: ${err}`,
       status_data: tempStatusDataDocument,
+      kategori_data: tempKategoriDataDocument,
     });
     // return res.status(500).json({ status: 'failed', data: `Gagal mengambil data produk. Function Catch: ${err}` });
   }
@@ -265,6 +288,7 @@ const GetProdukDetails = async (req, res) => {
 
 const UpdateProdukData = async (req, res) => {
   try {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
     const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     const { id } = req.params;
     const isDocumentHasInDatabase = await ProdukModel.findById(id);
@@ -275,6 +299,7 @@ const UpdateProdukData = async (req, res) => {
         isDeleteDocument: false,
         data: `Tidak ada data produk.`,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(404).json({ status: 'success', data: `Tidak ada data produk.` });
     }
@@ -285,11 +310,19 @@ const UpdateProdukData = async (req, res) => {
         isCreateDocument: true,
         data: `Format tidak sesuai! format:${FormatInputProduk}`,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputProduk });
     }
-
-    let updateProduk = { nama_produk: nama_produk.toLowerCase(), harga, kategori_id, status_id };
+    const tempSelectedDocumentByID = await ProdukModel.findById(id);
+    const tempStatusID = tempSelectedDocumentByID.status_id;
+    const tempKategoriID = tempSelectedDocumentByID.kategori_id;
+    let updateProduk = {
+      nama_produk: nama_produk.toLowerCase(),
+      harga,
+      kategori_id: kategori_id != 'null' ? kategori_id : tempKategoriID,
+      status_id: status_id != 'null' ? status_id : tempStatusID,
+    };
     return await ProdukModel.findByIdAndUpdate(id, updateProduk)
       // .then((result) => res.status(200).json({ status: 'success', data: `Berhasil memperbaharui data produk.` }))
       .then((result) =>
@@ -298,6 +331,7 @@ const UpdateProdukData = async (req, res) => {
           isCreateDocument: true,
           data: `Berhasil memperbaharui data produk.`,
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         })
       )
       // .catch((err) => res.status(500).json({ status: 'failed', data: `Gagal memperbaharui data produk. Function Catch: ${err}` }));
@@ -307,14 +341,18 @@ const UpdateProdukData = async (req, res) => {
           isCreateDocument: true,
           data: `Gagal memperbaharui data produk. Function Catch: ${err}`,
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         })
       );
   } catch (err) {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
+    const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     res.render('produk', {
       isDetails: false,
       isCreateDocument: true,
       data: `Gagal memperbaharui data produk. Function Catch: ${err}`,
       status_data: tempStatusDataDocument,
+      kategori_data: tempKategoriDataDocument,
     });
     // return res.status(500).json({ status: 'failed', data: `Gagal memperbaharui data produk. Function Catch: ${err}` });
   }
@@ -322,6 +360,7 @@ const UpdateProdukData = async (req, res) => {
 
 const DeleteProdukData = async (req, res) => {
   try {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
     const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     const { id } = req.params;
     const isDocumentHasInDatabase = await ProdukModel.findById(id);
@@ -331,19 +370,21 @@ const DeleteProdukData = async (req, res) => {
         isCreateDocument: true,
         data: `Tidak ada data produk.`,
         status_data: tempStatusDataDocument,
+        kategori_data: tempKategoriDataDocument,
       });
-      // return res.status(404).json({ status: 'success', data: `Tidak ada data produk.` });
+      return res.status(404).json({ status: 'success', data: `Tidak ada data produk.` });
     }
     return await ProdukModel.findByIdAndRemove(id)
-      .then((result) =>
+      .then((result) => {
         res.render('produk', {
           isDetails: false,
           isCreateDocument: false,
           isDeleteDocument: true,
           data: 'Berhasil menghapus data produk.',
           status_data: tempStatusDataDocument,
-        })
-      )
+          kategori_data: tempKategoriDataDocument,
+        });
+      })
       .catch((err) =>
         res.render('produk', {
           isDetails: false,
@@ -351,15 +392,19 @@ const DeleteProdukData = async (req, res) => {
           isDeleteDocument: true,
           data: `Gagal menghapus data produk. Catch: ${err}`,
           status_data: tempStatusDataDocument,
+          kategori_data: tempKategoriDataDocument,
         })
       );
   } catch (err) {
+    const tempKategoriDataDocument = await KategoriModel.aggregate([{ $project: { _id: 1, nama_kategori: 1 } }]);
+    const tempStatusDataDocument = await StatusModel.aggregate([{ $project: { _id: 1, nama_status: 1 } }]);
     res.render('produk', {
       isDetails: false,
       isCreateDocument: false,
       isDeleteDocument: true,
       data: `Gagal menghapus data produk. Function Catch: ${err}`,
       status_data: tempStatusDataDocument,
+      kategori_data: tempKategoriDataDocument,
     });
     // return res.status(500).json({ status: 'failed', data: `Gagal menghapus data produk. Function Catch: ${err}` });
   }

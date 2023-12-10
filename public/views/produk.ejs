@@ -41,9 +41,9 @@
               <%const tempstatus_actived = status_actived.length<1?{'nama_status':'-'}:status_actived[0]; const {nama_status} =
               tempstatus_actived%>Status: <%=nama_status%>
             </h4>
-            <%if(list_kategori.length>0){list_kategori.forEach((list) =>{ const {_id,nama_kategori} = list})%>
+            <%if(list_kategori.length>0){list_kategori.forEach((list) =>{ const {_id,nama_kategori} = list%>
             <h5>Kategori:<%=nama_kategori%></h5>
-            <%}else{%>
+            <%})}else{%>
             <h5>Kategori: -</h5>
             <%}%>
             <a href="http://localhost:9000/produk/<%=_id%>">details</a>
@@ -51,9 +51,9 @@
               edit
             </div>
             <form id="form-delete-produk">
-              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-produk','<%=_id%>')">
+              <div id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-produk',`<%=_id%>`, `<%=nama_produk%>`)">
                 hapus
-              </button>
+              </div>
             </form>
           </div>
         </div>
@@ -74,28 +74,30 @@
       <div class="widget">
         <div onclick="showOverlayFormInputProduk('form-create-document-produk')" class="btn btn-primary">tambah</div>
       </div>
-      <div class="widget">
+      <!-- <div class="widget">
         <input type="text" class="form-control" id="search" placeholder="search" />
         <div class="btn btn-primary"><span class="fas fa-magnifying-glass"></span></div>
-      </div>
+      </div> -->
       <div class="widget">
         <div class="col">
           <label for="status" class="form-label">Status</label>
-          <select class="form-select" id="status">
+          <select class="form-select" id="status" onchange="onChangesFilter(true)">
             <option selected disabled value="">Choose...</option>
             <%if(status_data.length > 0){ status_data.forEach((list)=>{const {_id,nama_status}=list%>
-            <option value="<%=_id%>"><%=nama_status%></option>
+            <option value="<%=nama_status%>"><%=nama_status%></option>
             <%})}%>
           </select>
         </div>
       </div>
-      <div class="widget">
-        <div class="col">
-          <label for="ketegori" class="form-label">Kategori</label>
-          <select class="form-select" id="ketegori">
-            <option selected disabled value="">Choose...</option>
-          </select>
-        </div>
+      <div class="col">
+        <label for="kategori_id" class="form-label">Kategori</label>
+        <select id="kategori_id" class="form-select" onchange="onChangesFilter(false)">
+          <option selected disabled value="">Choose...</option>
+          <%if(kategori_data.length > 0){ kategori_data.forEach((list)=>{const {_id,nama_kategori}=list%>
+          <option value="<%=nama_kategori%>"><%=nama_kategori%></option>
+          <%})}%>
+        </select>
+        <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
       </div>
     </aside>
     <footer id="copyright-footer">
@@ -119,7 +121,7 @@
             <div class="invalid-feedback">Silahkan untuk mengisi harga produk.</div>
           </div>
           <div class="col-md-3">
-            <label for="status" class="form-label">Status</label>
+            <label for="status_id" class="form-label">Status</label>
             <select id="status_id" name="status_id" class="form-select">
               <option selected disabled value="">Choose...</option>
               <%if(status_data.length > 0){ status_data.forEach((list)=>{const {_id,nama_status}=list%>
@@ -129,12 +131,22 @@
             <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
           <div class="col-md-3">
+            <label for="kategori_id" class="form-label">Kategori</label>
+            <select id="kategori_id" name="kategori_id" class="form-select">
+              <option selected disabled value="">Choose...</option>
+              <%if(kategori_data.length > 0){ kategori_data.forEach((list)=>{const {_id,nama_kategori}=list%>
+              <option value="<%=_id%>"><%=nama_kategori%></option>
+              <%})}%>
+            </select>
+            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
+          </div>
+          <!-- <div class="col-md-3">
             <label for="list-kategori-checkbox-create">Kategori</label>
             <div id="list-kategori-checkbox-create" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
               <input type="checkbox" class="btn-check" id="create" autocomplete="off" />
               <label class="btn btn-outline-primary" for="create">Checkbox 1</label>
             </div>
-          </div>
+          </div> -->
           <div class="col-12">
             <button class="btn btn-primary" type="submit">Submit form</button>
             <button class="btn btn-danger" type="reset" onclick="hideOverlayFormInputProduk('form-create-document-produk')">Cancel</button>
@@ -153,17 +165,24 @@
             <div class="invalid-feedback">Silahkan untuk mengisi harga produk.</div>
           </div>
           <div class="col-md-3">
-            <label for="status" class="form-label">Status</label>
-            <select class="form-select" id="status">
-              <option selected disabled value="">Choose...</option>
+            <label for="status_id" class="form-label">Status</label>
+            <select id="status_id" name="status_id" class="form-select">
+              <option value="null">Choose...</option>
+              <%if(status_data.length > 0){ status_data.forEach((list)=>{const {_id,nama_status}=list%>
+              <option value="<%=_id%>"><%=nama_status%></option>
+              <%})}%>
             </select>
+            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
           <div class="col-md-3">
-            <label for="list-kategori-checkbox-update">Kategori</label>
-            <div id="list-kategori-checkbox-update" class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-              <input type="checkbox" class="btn-check" id="update" autocomplete="off" />
-              <label class="btn btn-outline-primary" for="update">Checkbox 1</label>
-            </div>
+            <label for="kategori_id" class="form-label">Kategori</label>
+            <select id="kategori_id" name="kategori_id" class="form-select">
+              <option value="null">Choose...</option>
+              <%if(kategori_data.length > 0){ kategori_data.forEach((list)=>{const {_id,nama_kategori}=list%>
+              <option value="<%=_id%>"><%=nama_kategori%></option>
+              <%})}%>
+            </select>
+            <!-- <div class="invalid-feedback">Please select a valid state.</div> -->
           </div>
           <div class="col-12">
             <button class="btn btn-primary" type="submit">Simpan</button>

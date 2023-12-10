@@ -31,27 +31,41 @@
       <% if(typeof data == 'string'){%>
       <div class="row justify-content-md-center"><h2><%=data%></h2></div>
       <%}else if(section == 'status'){ data.forEach((list) =>{const {_id,nama_status} = list%>
-        <div class="card" style="width: 18rem">
-          <div class="card-body">
-            <h2 class="card-title"><%= nama_status %></h2>
-            <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-status`,`<%=JSON.stringify(list)%>`)">edit</div>
-            <form id="form-delete-status">
-              <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-status','<%=JSON.stringify(list)%>')">
-                hapus
-              </button>
-            </form>
+      <div class="card" style="width: 18rem">
+        <div class="card-body">
+          <h2 class="card-title"><%= nama_status %></h2>
+          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-status`,`<%=JSON.stringify(list)%>`)">
+            edit
           </div>
+          <form id="form-delete-status">
+            <div
+              id="btn-delete-document"
+              class="btn btn-danger"
+              onclick="deleteDocumentAlert('form-delete-status','<%=_id%>')"
+            >
+              hapus
+            </div>
+          </form>
+        </div>
+      </div>
       <%})}else{data.forEach((list) =>{const {_id,nama_kategori} = list%>
       <div class="card" style="width: 18rem">
         <div class="card-body">
           <h2 class="card-title"><%= nama_kategori %></h2>
-          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-kategori`,`<%=JSON.stringify(list)%>`)">edit</div>
+          <div class="btn btn-primary" onclick="showOverlayFormInputProduk(`form-edit-document-kategori`,`<%=JSON.stringify(list)%>`)">
+            edit
+          </div>
           <form id="form-delete-kategori">
-            <button id="btn-delete-document" class="btn btn-danger" onclick="deleteDocumentAlert('form-delete-kategori','<%=JSON.stringify(list)%>')">
+            <div
+              id="btn-delete-document"
+              class="btn btn-danger"
+              onclick="deleteDocumentAlert('form-delete-kategori','<%=_id%>')"
+            >
               hapus
-            </button>
+            </div>
           </form>
         </div>
+      </div>
       <%})}%>
     </main>
     <aside id="container-fitur">
@@ -62,10 +76,10 @@
         <div onclick="showOverlayFormInputProduk('form-create-document-kategori')" class="btn btn-primary">tambah</div>
         <%}%>
       </div>
-      <div class="widget">
+      <!-- <div class="widget">
         <input type="text" class="form-control" id="search" placeholder="search" />
         <div class="btn btn-primary"><span class="fas fa-magnifying-glass"></span></div>
-      </div>
+      </div> -->
     </aside>
     <footer id="copyright-footer">
       2023 &copy;

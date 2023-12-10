@@ -7,8 +7,13 @@ const CreateKategoriData = async (req, res) => {
   try {
     const { nama_kategori } = req.body.data ? JSON.parse(req.body.data) : req.body;
     if (!nama_kategori) {
-      res.render('list', { section: 'status', data: `Format tidak sesuai! format: ${FormatInputKategori}` });
+      res.render('list', { section: 'kategori', data: `Format tidak sesuai! format: ${FormatInputKategori}` });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
+    }
+    const isAlreadyHaveData = await KategoriModel.find({ nama_kategori: nama_kategori.toLowerCase() });
+    if (isAlreadyHaveData.length >= 1) {
+      res.render('list', { section: 'kategori', data: `nama kategori sudah terdaftar! harap untuk menggunakan yang lain.` });
+      return res.status(403).json({ status: 'failed', message: `nama kategori sudah terdaftar! harap untuk menggunakan yang lain.` });
     }
     const newKategori = KategoriModel({ nama_kategori: nama_kategori.toLowerCase() });
     return await newKategori
@@ -85,7 +90,11 @@ const UpdateKategoriData = async (req, res) => {
       res.render('list', { section: 'kategori', data: `Format tidak sesuai! format: ${FormatInputKategori}` });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputKategori });
     }
-
+    const isAlreadyHaveData = await KategoriModel.find({ nama_kategori: nama_kategori.toLowerCase() });
+    if (isAlreadyHaveData.length >= 1) {
+      res.render('list', { section: 'kategori', data: `nama kategori sudah terdaftar! harap untuk menggunakan yang lain.` });
+      return res.status(403).json({ status: 'failed', message: `nama kategori sudah terdaftar! harap untuk menggunakan yang lain.` });
+    }
     let updateKategori = { nama_kategori: nama_kategori.toLowerCase() };
     return await KategoriModel.findByIdAndUpdate(id, updateKategori)
       // .then((result) => res.status(200).json({ section: 'kategori', status: 'success', data: `Berhasil memperbaharui data kategori.` }))

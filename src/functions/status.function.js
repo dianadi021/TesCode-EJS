@@ -10,6 +10,11 @@ const CreateStatusData = async (req, res) => {
       res.render('list', { section: 'status', data: `Format tidak sesuai! format: ${FormatInputStatus}` });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputStatus });
     }
+    const isAlreadyHaveData = await StatusModel.find({ nama_status: nama_status.toLowerCase() });
+    if (isAlreadyHaveData.length >= 1) {
+      res.render('list', { section: 'status', data: `nama status sudah terdaftar! harap untuk menggunakan yang lain.` });
+      return res.status(403).json({ status: 'failed', message: `nama status sudah terdaftar! harap untuk menggunakan yang lain.` });
+    }
     const newStatus = StatusModel({ nama_status: nama_status.toLowerCase() });
     return await newStatus
       .save()
@@ -86,9 +91,13 @@ const UpdateStatusData = async (req, res) => {
       res.render('list', { section: 'status', data: `Format tidak sesuai! format: ${FormatInputStatus}` });
       // return res.status(404).json({ status: 'failed', data: `Format tidak sesuai!`, format: FormatInputStatus });
     }
-
-    let updateKategori = { nama_status: nama_status.toLowerCase() };
-    return await StatusModel.findByIdAndUpdate(id, updateKategori)
+    const isAlreadyHaveData = await StatusModel.find({ nama_status: nama_status.toLowerCase() });
+    if (isAlreadyHaveData.length >= 1) {
+      res.render('list', { section: 'status', data: `nama status sudah terdaftar! harap untuk menggunakan yang lain.` });
+      return res.status(403).json({ status: 'failed', message: `nama status sudah terdaftar! harap untuk menggunakan yang lain.` });
+    }
+    let updateStatus = { nama_status: nama_status.toLowerCase() };
+    return await StatusModel.findByIdAndUpdate(id, updateStatus)
       // .then((result) => res.status(200).json({ status: 'success', data: `Berhasil memperbaharui data status.` }))
       .then((result) => res.render('list', { section: 'status', data: `Berhasil memperbaharui data status.` }))
       .catch((result) => res.render('list', { section: 'status', data: `Gagal memperbaharui data status. Function Catch: ${err}` }));

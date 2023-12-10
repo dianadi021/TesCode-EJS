@@ -147,23 +147,27 @@ function hideOverlayFormInputProduk(FormID) {
   document.getElementById(FormID).style.display = 'none';
 }
 
-function deleteDocumentAlert(FormID, list) {
-  const confirmDelete = prompt("Apakah anda mau menghapus document? ketik 'Lanjutkan'");
-  if (confirmDelete == 'lanjutkan') {
-    const { _id } = JSON.parse(list);
-    document.getElementById(FormID).setAttribute('method', `post`);
-    if (FormID == 'form-delete-status') {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/status/delete/${_id}`);
-    } else if (FormID == 'form-delete-kategori') {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/kategori/delete/${_id}`);
+function deleteDocumentAlert(FormID, _id, nama_produk) {
+  if (FormID) {
+    const isConfirmed = confirm('Apakah mau melanjutkan proses hapus?');
+    if (isConfirmed) {
+      if (FormID == 'form-delete-status') {
+        $(`#${FormID}`).attr('action', `http://localhost:9000/status/delete/${_id}`);
+        $(`#${FormID}`).attr('method', `post`);
+        document.getElementById(FormID).submit();
+      } else if (FormID == 'form-delete-kategori') {
+        $(`#${FormID}`).attr('action', `http://localhost:9000/kategori/delete/${_id}`);
+        $(`#${FormID}`).attr('method', `post`);
+        document.getElementById(FormID).submit();
+      } else {
+        $(`#form-delete-produk`).attr('action', `http://localhost:9000/produk/delete/${_id}`);
+        $(`#form-delete-produk`).attr('method', `post`);
+        document.getElementById('form-delete-produk').submit();
+      }
     } else {
-      document.getElementById(FormID).setAttribute('action', `http://localhost:9000/produk/delete/${_id}`);
+      alert('Penghapusan dibatalkan.');
+      return false;
     }
-    document.getElementById('btn-delete-document').addEventListener('click', FormID);
-  } else if (typeof confirmDelete == 'string' && confirmDelete != 'lanjutkan') {
-    alert('Inputan tidak sesuai! Silahkan coba lagi.');
-  } else {
-    alert('Penghapusan document telah dibatalkan.');
   }
 }
 
@@ -172,3 +176,17 @@ const GetIDNMoneyCurrency = (Money) => {
 };
 
 const EditChangesFormValue = (nama, harga, kategori, status) => {};
+
+const onChangesFilter = (isStatus) => {
+  if (isStatus) {
+    const selectedValue = $('#status').val();
+    if (selectedValue) {
+      window.location.href = `http://localhost:9000/produk?nama_status=${selectedValue}`;
+    }
+  } else {
+    const selectedValue = $('#kategori_id').val();
+    if (selectedValue) {
+      window.location.href = `http://localhost:9000/produk?nama_kategori=${selectedValue}`;
+    }
+  }
+};

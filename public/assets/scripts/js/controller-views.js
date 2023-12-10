@@ -6,10 +6,11 @@ $(document).ready(() => {
   $.getScript(serverURL + '/scripts/js/personal-function.js', () => {
     DisableRightClickOnMouse();
     FormValidationForProduk();
+    deleteDocumentAlert();
     showOverlayFormInputProduk();
     hideOverlayFormInputProduk();
-    deleteDocumentAlert();
     GetIDNMoneyCurrency();
+    onChangesFilter();
   });
 
   $.getScript(serverURL + '/views/home.js', async () => {
